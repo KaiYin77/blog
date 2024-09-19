@@ -1,0 +1,6 @@
+[book]
+authors = ["kaiyin"]
+language = "en"
+multilingual = false
+src = "src"
+title = "blog"
