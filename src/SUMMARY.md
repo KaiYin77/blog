@@ -4,4 +4,5 @@
 
 # 2024
 
-- [終於畢業了](./2024_graduation.md)
+- [醫生你是不是老了?](./2024_pull_a_wisdom_tooth.md)
+- [從麥當勞畢業](./2024_graduation.md)
