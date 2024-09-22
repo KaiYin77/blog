@@ -7,7 +7,7 @@ title = "blog"
 
 [preprocessor.pagetoc]
 [output.html]
-additional-css = ["theme/pagetoc.css"]
+additional-css = ["theme/pagetoc.css", "theme/footer.css"]
 additional-js  = ["theme/pagetoc.js"]
 default-theme = "light"
 preferred-dark-theme = "ayu"
