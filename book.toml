@@ -5,6 +5,9 @@ multilingual = false
 src = "src"
 title = "blog"
 
+[preprocessor.pagetoc]
 [output.html]
+additional-css = ["theme/pagetoc.css"]
+additional-js  = ["theme/pagetoc.js"]
 default-theme = "light"
 preferred-dark-theme = "ayu"
