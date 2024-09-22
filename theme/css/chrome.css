@@ -137,7 +137,6 @@ a > .hljs {
     text-align: center;
     text-decoration: none;
 
-    position: fixed;
     top: 0;
     bottom: 0;
     margin: 0;
@@ -148,19 +147,39 @@ a > .hljs {
     justify-content: center;
     align-content: center;
     flex-direction: column;
+    padding: 10px 50px; /* Increased padding for wider buttons */
 
-    transition: color 0.5s, background-color 0.5s;
+    transition: color 0.5s;
+    border: 1px solid;
+    border-radius: 0.15em;
+    color: var(--icons-hover);
+    width: 100vw;
 }
 
 .nav-chapters:hover {
     text-decoration: none;
     background-color: var(--theme-hover);
-    transition: background-color 0.15s, color 0.15s;
+    border-radius: 0.1em;
 }
 
 .nav-wrapper {
     margin-block-start: 50px;
     display: none;
+}
+
+.chrome-nav-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.nav-wide-wrapper {
+    display: flex;
+    width: 60vw;
+    justify-content: space-between;
+    /* max-width: 300px; Adjust this value as needed */
+    gap: 10px; /* This sets the space between the buttons */
+    width: auto; /* Allow the width to be determined by content */
 }
 
 .mobile-nav-chapters {
@@ -192,13 +211,13 @@ a > .hljs {
 [dir=rtl] .next i.fa-angle-right:before { content:"\f104"; }
 
 @media only screen and (max-width: 1080px) {
-    .nav-wide-wrapper { display: none; }
+    .nav-wide-wrapper { display: none !important; }
     .nav-wrapper { display: block; }
 }
 
 /* sidebar-visible */
 @media only screen and (max-width: 1380px) {
-    #sidebar-toggle-anchor:checked ~ .page-wrapper .nav-wide-wrapper { display: none; }
+    #sidebar-toggle-anchor:checked ~ .page-wrapper .nav-wide-wrapper { display: none !important; }
     #sidebar-toggle-anchor:checked ~ .page-wrapper .nav-wrapper { display: block; }
 }
 
