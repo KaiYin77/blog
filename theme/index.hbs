@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{{ path_to_root }}css/general.css">
     <link rel="stylesheet" href="{{ path_to_root }}css/chrome.css">
     <link rel="stylesheet" href="{{ path_to_root }}/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     {{!-- {{#if print_enable}}
     <link rel="stylesheet" href="{{ path_to_root }}css/print.css" media="print">
@@ -156,11 +157,15 @@
                             aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                        <label id="theme-toggle" class="icon-button" type="button" title="Change theme"
+                            aria-label="Change theme" aria-expanded="false">
+                            <i class="fa-regular fa-sun"></i>
+                        </label>
+                        {{!-- <button id="theme-toggle" class="icon-button" type="button" title="Change theme"
                             aria-label="Change theme" aria-haspopup="true" aria-expanded="false"
                             aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
-                        </button>
+                        </button> --}}
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Dark</button></li>
@@ -173,10 +178,11 @@
                         </button>
                         {{/if}}
                         <!-- New button for favicon link -->
-                        <a href="https://kaiyin77.github.io/personal-site/" id="favicon-link" class="icon-button"
-                            title="Back to home" aria-label="Back to home" , style="font-size: x-large;">
-                            <i class="fa fa-home" aria-hidden="true"></i>
-                        </a>
+                        <button id="favicon-link" class="icon-button" title="Back to home" aria-label="Back to home">
+                            <a href="https://kaiyin77.github.io/personal-site/">
+                                <i class="fa fa-home" aria-hidden="true"></i>
+                            </a>
+                        </button>
                     </div>
 
                     {{!-- <h1 class="menu-title">{{ book_title }}</h1> --}}
@@ -253,15 +259,15 @@
             <div class="chrome-nav-wrapper">
                 <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     {{#previous}}
-                    <a rel="prev" href="{{ path_to_root }}{{link}}" class="nav-chapters previous" title="Previous chapter"
-                        aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="{{ path_to_root }}{{link}}" class="nav-chapters previous"
+                        title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                     {{/previous}}
 
                     {{#next}}
-                    <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="nav-chapters next" title="Next chapter"
-                        aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="nav-chapters next"
+                        title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                     {{/next}}
