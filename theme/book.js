@@ -741,7 +741,6 @@ function playground_text(playground, hidden = true) {
         }
 
         attachEventListener();
-        console.log('Edit mode initialized successfully');
     }
 
     function attachEventListener() {
@@ -888,7 +887,6 @@ function playground_text(playground, hidden = true) {
 
         let currentPath = window.location.pathname;
         let filePath = currentPath.replace(/^\//, '').replace(/\.html$/, '.md');
-        console.log('Saving changes to', filePath);
 
         try {
             const response = await fetch('http://localhost:8000/save-content', {
@@ -908,8 +906,8 @@ function playground_text(playground, hidden = true) {
                 throw new Error('Server responded with an error');
             }
         } catch (error) {
-            console.error('Failed to save changes:', error);
             alert('保存失敗');
+            exitEditMode();
         }
     }
 
@@ -925,3 +923,31 @@ function playground_text(playground, hidden = true) {
         updateButtonStyle();
     }
 })();
+
+// 頁面加載完成後執行
+document.addEventListener('DOMContentLoaded', function() {
+    checkBackendAvailability();
+});
+
+function checkBackendAvailability() {
+    fetch('http://localhost:8000/', { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                showEditButton();
+            } else {
+                console.log('Backend is not available');
+            }
+        })
+        .catch(error => {
+            console.error('Error checking backend availability:', error);
+        });
+}
+
+function showEditButton() {
+    const editButton = document.getElementById('edit-button');
+    if (editButton) {
+        editButton.style.display = '';
+    } else {
+        console.error('Edit button not found');
+    }
+}
