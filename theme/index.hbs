@@ -185,7 +185,22 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title"> 貼文 </h1>
+                    <h1 class="menu-title">
+                        <div class="menu-title-center" id="menu-title-center" onclick="showCreatePost()">按我建立貼文</div>
+                        <div id="input-container" style="display: none;">
+                            <input type="text" id="filename-input" placeholder="輸入檔案名稱.md" />
+                            <button id="create-button" class="icon-button" type="button" title="Create Post"
+                                aria-label="Create Post" aria-expanded="false"
+                                onclick="createPost()">
+                                <i class="fa-solid fa-circle-plus"></i>
+                            </button>
+                            <button id="cancel-button" class="icon-button" type="button" title="Cancel Post"
+                                aria-label="Cancel Post" aria-expanded="false"
+                                onclick="cancelPost()">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
+                        </div>
+                    </h1>
 
                     {{!-- <div class="right-buttons"> --}}
                         {{!-- {{#if print_enable}}

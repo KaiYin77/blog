@@ -951,3 +951,29 @@ function showEditButton() {
         console.error('Edit button not found');
     }
 }
+
+function showCreatePost() {
+    // Hide the "建立貼文" text and show the input form
+    document.getElementById('menu-title-center').style.display = 'none';
+    document.getElementById('input-container').style.display = 'flex';
+}
+
+function createPost() {
+    const filename = document.getElementById('filename-input').value;
+
+    if (filename) {
+        // Reset input and hide the input container
+        document.getElementById('filename-input').value = '';
+        document.getElementById('input-container').style.display = 'none';
+        document.getElementById('menu-title-center').style.display = 'flex';
+    } else {
+        alert("Please enter a filename.");
+    }
+}
+
+function cancelPost() {
+    // Reset the input and hide the input container
+    document.getElementById('filename-input').value = '';
+    document.getElementById('input-container').style.display = 'none';
+    document.getElementById('menu-title-center').style.display = 'flex';
+}
