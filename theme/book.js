@@ -2,6 +2,7 @@
 
 // Fix back button cache problem
 window.onunload = function () { };
+var isBackendAvailable = false;
 
 // Global variable, shared between modules
 function playground_text(playground, hidden = true) {
@@ -933,36 +934,51 @@ function checkBackendAvailability() {
     fetch('http://localhost:8000/', { method: 'HEAD' })
         .then(response => {
             if (response.ok) {
+                isBackendAvailable = true;
                 showEditButton();
             } else {
                 console.log('Backend is not available');
+                disableCreateButton();
             }
         })
         .catch(error => {
             console.error('Error checking backend availability:', error);
+            disableCreateButton();
         });
 }
 
+function disableCreateButton() {
+    const menuTitleCenter = document.getElementById('menu-title-center');
+    menuTitleCenter.classList.add('disabled');
+    menuTitleCenter.textContent = '貼文';
+    menuTitleCenter.onclick = null;
+}
+
 function showEditButton() {
-    const editButton = document.getElementById('edit-button');
-    if (editButton) {
-        editButton.style.display = '';
-    } else {
-        console.error('Edit button not found');
+    if (isBackendAvailable) {
+        const editButton = document.getElementById('edit-button');
+        if (editButton) {
+            editButton.style.display = '';
+        } else {
+            console.error('Edit button not found');
+        }
     }
 }
 
 function showCreatePost() {
     // Hide the "建立貼文" text and show the input form
-    document.getElementById('menu-title-center').style.display = 'none';
-    document.getElementById('input-container').style.display = 'flex';
+    if (isBackendAvailable) {
+        document.getElementById('menu-title-center').style.display = 'none';
+        document.getElementById('input-container').style.display = 'flex';
+    }
 }
 
 function createPost() {
     const filenameInput = document.getElementById('filename-input');
-    const filename = filenameInput.value;
+    const filename_title = filenameInput.value;
+    const parts = filename_title.split('/');
 
-    async function sendCreatePost(filePath) {
+    async function sendCreatePost(filename, title) {
         try {
             const response = await fetch('http://localhost:8000/create-post', {
                 method: 'POST',
@@ -970,7 +986,8 @@ function createPost() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    file_path: filePath
+                    file_path: filename,
+                    title: title,
                 }),
             });
             if (response.ok) {
@@ -982,16 +999,25 @@ function createPost() {
         }
     }
 
-    if (!filename) {
-        filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
-    } else if (!filename.endsWith('.md')) {
-        filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
+    if (parts.length === 2) {
+        const filename = parts[0]; // "輸入.md"
+        const title = parts[1];    // "標題"
+
+        if (!filename) {
+            filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
+        } else if (!filename.endsWith('.md')) {
+            filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
+        } else if (!title) {
+            filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; // Softer red
+        } else {
+            // Reset input and hide the input container
+            sendCreatePost(filename, title);
+            document.getElementById('filename-input').value = '';
+            document.getElementById('input-container').style.display = 'none';
+            document.getElementById('menu-title-center').style.display = 'flex';
+        }
     } else {
-        // Reset input and hide the input container
-        sendCreatePost();
-        document.getElementById('filename-input').value = '';
-        document.getElementById('input-container').style.display = 'none';
-        document.getElementById('menu-title-center').style.display = 'flex';
+        filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; // Softer red
     }
 }
 

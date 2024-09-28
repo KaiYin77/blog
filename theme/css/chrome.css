@@ -180,6 +180,10 @@ a>.hljs {
     border-radius: 15px;
 }
 
+.menu-title-center.disabled:hover {
+    background-color: transparent;
+}
+
 
 #favicon-link {
     font-size: 1.5em;
