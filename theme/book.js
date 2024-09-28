@@ -722,3 +722,198 @@ function playground_text(playground, hidden = true) {
         document.addEventListener('scroll', updateBorder, { passive: true });
     })();
 })();
+
+(function controllEditMode() {
+    var toggleButton;
+    var contentWrap;
+    var originalContent;
+    var isEditMode = false;
+
+    // Wait for the DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', initialize);
+
+    function initialize() {
+        toggleButton = document.getElementById('edit-button');
+        if (!toggleButton) {
+            console.error('Edit button not found');
+            return;
+        }
+
+        attachEventListener();
+        console.log('Edit mode initialized successfully');
+    }
+
+    function attachEventListener() {
+        toggleButton.addEventListener('click', handleToggleClick);
+    }
+
+    function handleToggleClick() {
+        if (isEditMode) {
+            saveChanges();
+        } else {
+            loadContentAndEnterEditMode();
+        }
+    }
+
+    function loadContentAndEnterEditMode() {
+        contentWrap = document.querySelector('.content-wrap');
+        if (!contentWrap) {
+            console.error('Content-wrap element not found');
+            return;
+        }
+
+        // Store the original HTML content
+        originalContent = contentWrap.innerHTML;
+
+        enterEditMode();
+    }
+
+    function enterEditMode() {
+        isEditMode = true;
+        // Convert HTML to a markdown-like format
+        var markdownContent = htmlToMarkdown(contentWrap.innerHTML);
+
+        // Create a textarea with the markdown-like content
+        var editor = document.createElement('textarea');
+        editor.value = markdownContent;
+        editor.style.width = '100%';
+        editor.style.height = '500px'; // Adjust as needed
+
+        // Replace the content with the editor
+        contentWrap.innerHTML = '';
+        contentWrap.appendChild(editor);
+
+        updateButtonStyle();
+    }
+
+    function htmlToMarkdown(html) {
+        // Remove all newlines and extra spaces to start with a clean slate
+        let markdown = html.replace(/\s+/g, ' ').trim();
+
+        // Headers
+        markdown = markdown
+            .replace(/<h1.*?>(.*?)<\/h1>/gi, '\n\n# $1\n\n')
+            .replace(/<h2.*?>(.*?)<\/h2>/gi, '\n\n## $1\n\n')
+            .replace(/<h3.*?>(.*?)<\/h3>/gi, '\n\n### $1\n\n')
+            .replace(/<h4.*?>(.*?)<\/h4>/gi, '\n\n#### $1\n\n')
+            .replace(/<h5.*?>(.*?)<\/h5>/gi, '\n\n##### $1\n\n')
+            .replace(/<h6.*?>(.*?)<\/h6>/gi, '\n\n###### $1\n\n');
+
+        // Paragraphs
+        markdown = markdown.replace(/<p.*?>(.*?)<\/p>/gi, '\n\n$1\n\n');
+
+        // Line breaks
+        markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
+
+        // Bold
+        markdown = markdown.replace(/<(strong|b)>(.*?)<\/\1>/gi, '**$2**');
+
+        // Italic
+        markdown = markdown.replace(/<(em|i)>(.*?)<\/\1>/gi, '*$2*');
+
+        // Strikethrough
+        markdown = markdown.replace(/<(del|s)>(.*?)<\/\1>/gi, '~~$2~~');
+
+        // Links
+        markdown = markdown.replace(/<a.*?href="(.*?)".*?>(.*?)<\/a>/gi, '[$2]($1)');
+
+        // Images
+        markdown = markdown.replace(/<img.*?src="(.*?)".*?alt="(.*?)".*?>/gi, '![$2]($1)');
+
+        // Lists
+        markdown = markdown
+            .replace(/<(ul|ol)>|<\/(ul|ol)>/gi, '\n\n')
+            .replace(/<li>(.*?)<\/li>/gi, '- $1\n');
+
+        // Blockquotes
+        markdown = markdown.replace(/<blockquote>(.*?)<\/blockquote>/gi, '\n\n> $1\n\n');
+
+        // Code blocks
+        markdown = markdown.replace(/<pre><code>(.*?)<\/code><\/pre>/gi, '\n```\n$1\n```\n');
+
+        // Inline code
+        markdown = markdown.replace(/<code>(.*?)<\/code>/gi, '`$1`');
+
+        // Horizontal rules
+        markdown = markdown.replace(/<hr\s*\/?>/gi, '\n\n---\n\n');
+
+        // Tables (basic support)
+        markdown = markdown.replace(/<table>(.*?)<\/table>/gi, function (match, tableContent) {
+            let rows = tableContent.match(/<tr>(.*?)<\/tr>/gi);
+            if (!rows) return match;
+
+            return '\n' + rows.map(row => {
+                let cells = row.match(/<t[hd]>(.*?)<\/t[hd]>/gi);
+                if (!cells) return '';
+                return '| ' + cells.map(cell => cell.replace(/<\/?t[hd]>/gi, '').trim()).join(' | ') + ' |';
+            }).join('\n') + '\n';
+        });
+
+        // Clean up extra spaces and newlines
+        markdown = markdown
+            .replace(/&nbsp;/g, ' ')
+            .replace(/\n\s+\n/g, '\n\n')
+            .replace(/\n\n\n+/g, '\n\n')
+            .trim();
+
+        return markdown;
+    }
+
+    function updateButtonStyle() {
+        if (isEditMode) {
+            toggleButton.title = 'Save changes';
+            toggleButton.setAttribute('aria-label', 'Save changes');
+            toggleButton.innerHTML = '<i class="far fa-save"></i>';
+        } else {
+            toggleButton.title = 'Edit';
+            toggleButton.setAttribute('aria-label', 'Edit');
+            toggleButton.innerHTML = '<i class="far fa-edit"></i>';
+        }
+    }
+
+    async function saveChanges() {
+        if (!contentWrap) {
+            console.error('Content wrap not initialized');
+            return;
+        }
+
+        var editor = contentWrap.querySelector('textarea');
+        if (!editor) {
+            console.error('Editor not found');
+            return;
+        }
+
+        try {
+            const response = await fetch('/save-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: editor.value }),
+            });
+            if (response.ok) {
+                exitEditMode();
+                alert('Changes saved successfully!');
+                // Reload the page to show the updated rendered content
+                window.location.reload();
+            } else {
+                throw new Error('Server responded with an error');
+            }
+        } catch (error) {
+            console.error('Failed to save changes:', error);
+            alert('Failed to save changes. Please try again.');
+        }
+    }
+
+    function exitEditMode() {
+        if (!contentWrap) {
+            console.error('Content wrap not initialized');
+            return;
+        }
+
+        isEditMode = false;
+        // Restore the original content
+        contentWrap.innerHTML = originalContent;
+        updateButtonStyle();
+    }
+})();

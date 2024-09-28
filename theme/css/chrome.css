@@ -119,7 +119,13 @@ a>.hljs {
 }
 
 .right-buttons {
-    margin: 0 15px;
+    display: flex;
+    margin: 5px;
+    align-items: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    gap: 8px;
 }
 
 .right-buttons a {
@@ -740,4 +746,24 @@ ul#searchresults span.teaser em {
     content: "✓";
     margin-inline-start: -14px;
     width: 14px;
+}
+
+.content-wrap textarea {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;  /* Increased from default */
+    line-height: 1.5; /* Improved line spacing */
+    padding: 15px;    /* Increased padding */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 500px;
+    box-sizing: border-box;
+    resize: vertical; /* Allows vertical resizing */
+    background-color: #f9f9f9; /* Light background for better contrast */
+    color: #333;      /* Dark gray text for readability */
+}
+
+.content-wrap textarea:focus {
+    outline: none;
+    border-color: #007bff; /* Highlight color when focused */
 }
