@@ -190,13 +190,11 @@
                         <div id="input-container" style="display: none;">
                             <input type="text" id="filename-input" placeholder="輸入檔案名稱.md/標題" />
                             <button id="create-button" class="icon-button" type="button" title="Create Post"
-                                aria-label="Create Post" aria-expanded="false"
-                                onclick="createPost()">
+                                aria-label="Create Post" aria-expanded="false" onclick="createPost()">
                                 <i class="fa-solid fa-circle-plus"></i>
                             </button>
                             <button id="cancel-button" class="icon-button" type="button" title="Cancel Post"
-                                aria-label="Cancel Post" aria-expanded="false"
-                                onclick="cancelPost()">
+                                aria-label="Cancel Post" aria-expanded="false" onclick="cancelPost()">
                                 <i class="fa-solid fa-circle-xmark"></i>
                             </button>
                         </div>
@@ -222,6 +220,11 @@
                         {{!--
                     </div> --}}
                     <div class="right-buttons">
+                        <button id="delete-button" class="icon-button" style="display: none;" type="button"
+                            title="Delete button" aria-label="Delete Post" aria-expanded="false"
+                            aria-controls="deleteButton">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
                         <button id="edit-button" class="icon-button" style="display: none;" type="button"
                             title="Edit button" aria-label="Edit" aria-expanded="false" aria-controls="editButton">
                             <i class="far fa-edit"></i>

@@ -725,7 +725,7 @@ function playground_text(playground, hidden = true) {
 })();
 
 (function controllEditMode() {
-    var toggleButton;
+    var editeToggleButton;
     var contentWrap;
     var originalContent;
     var isEditMode = false;
@@ -735,8 +735,8 @@ function playground_text(playground, hidden = true) {
     document.addEventListener('keydown', handleShortcuts);
 
     function initialize() {
-        toggleButton = document.getElementById('edit-button');
-        if (!toggleButton) {
+        editeToggleButton = document.getElementById('edit-button');
+        if (!editeToggleButton) {
             console.error('Edit button not found');
             return;
         }
@@ -745,7 +745,7 @@ function playground_text(playground, hidden = true) {
     }
 
     function attachEventListener() {
-        toggleButton.addEventListener('click', handleToggleClick);
+        editeToggleButton.addEventListener('click', handleEditeToggleClick);
     }
 
     function handleShortcuts(event) {
@@ -755,7 +755,7 @@ function playground_text(playground, hidden = true) {
         }
     }
 
-    function handleToggleClick() {
+    function handleEditeToggleClick() {
         if (isEditMode) {
             saveChanges();
         } else {
@@ -791,7 +791,8 @@ function playground_text(playground, hidden = true) {
         contentWrap.innerHTML = '';
         contentWrap.appendChild(editor);
 
-        updateButtonStyle();
+        updateEditeButtonStyle();
+        updateDeleteButton();
     }
 
     function htmlToMarkdown(html) {
@@ -862,15 +863,15 @@ function playground_text(playground, hidden = true) {
         return markdown;
     }
 
-    function updateButtonStyle() {
+    function updateEditeButtonStyle() {
         if (isEditMode) {
-            toggleButton.title = 'Save changes';
-            toggleButton.setAttribute('aria-label', 'Save changes');
-            toggleButton.innerHTML = '<i class="far fa-save"></i>';
+            editeToggleButton.title = 'Save changes';
+            editeToggleButton.setAttribute('aria-label', 'Save changes');
+            editeToggleButton.innerHTML = '<i class="far fa-save"></i>';
         } else {
-            toggleButton.title = 'Edit';
-            toggleButton.setAttribute('aria-label', 'Edit');
-            toggleButton.innerHTML = '<i class="far fa-edit"></i>';
+            editeToggleButton.title = 'Edit';
+            editeToggleButton.setAttribute('aria-label', 'Edit');
+            editeToggleButton.innerHTML = '<i class="far fa-edit"></i>';
         }
     }
 
@@ -902,12 +903,10 @@ function playground_text(playground, hidden = true) {
             });
             if (response.ok) {
                 exitEditMode();
-                window.location.reload();
             } else {
                 throw new Error('Server responded with an error');
             }
         } catch (error) {
-            alert('保存失敗');
             exitEditMode();
         }
     }
@@ -919,9 +918,28 @@ function playground_text(playground, hidden = true) {
         }
 
         isEditMode = false;
-        // Restore the original content
-        contentWrap.innerHTML = originalContent;
-        updateButtonStyle();
+        updateEditeButtonStyle();
+        updateDeleteButton();
+    }
+
+    function updateDeleteButton() {
+        const rightButtons = document.querySelector('.right-buttons');
+        const deleteButton = document.getElementById('delete-button');
+
+        if (!rightButtons || !deleteButton) {
+            console.error('Required elements not found');
+            return;
+        }
+
+        if (isEditMode) {
+            rightButtons.style.width = '96px';
+            rightButtons.style.gap = '0px';
+            deleteButton.style.display = '';
+        } else {
+            deleteButton.style.display = 'none';
+            rightButtons.style.width = '48px';
+            rightButtons.style.gap = '8px';
+        }
     }
 })();
 
