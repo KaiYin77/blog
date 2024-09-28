@@ -925,7 +925,7 @@ function playground_text(playground, hidden = true) {
 })();
 
 // 頁面加載完成後執行
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     checkBackendAvailability();
 });
 
@@ -959,15 +959,39 @@ function showCreatePost() {
 }
 
 function createPost() {
-    const filename = document.getElementById('filename-input').value;
+    const filenameInput = document.getElementById('filename-input');
+    const filename = filenameInput.value;
 
-    if (filename) {
+    async function sendCreatePost(filePath) {
+        try {
+            const response = await fetch('http://localhost:8000/create-post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    file_path: filePath
+                }),
+            });
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Server responded with an error');
+            }
+        } catch (error) {
+        }
+    }
+
+    if (!filename) {
+        filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
+    } else if (!filename.endsWith('.md')) {
+        filenameInput.style.border = '1.5px dashed rgba(255, 0, 0, 0.6)'; /* Softer red */
+    } else {
         // Reset input and hide the input container
+        sendCreatePost();
         document.getElementById('filename-input').value = '';
         document.getElementById('input-container').style.display = 'none';
         document.getElementById('menu-title-center').style.display = 'flex';
-    } else {
-        alert("Please enter a filename.");
     }
 }
 
