@@ -726,6 +726,7 @@ function playground_text(playground, hidden = true) {
 
 (function controllEditMode() {
     var editeToggleButton;
+    var deleteButton;
     var contentWrap;
     var originalContent;
     var isEditMode = false;
@@ -736,6 +737,7 @@ function playground_text(playground, hidden = true) {
 
     function initialize() {
         editeToggleButton = document.getElementById('edit-button');
+        deleteButton = document.getElementById('delete-button');
         if (!editeToggleButton) {
             console.error('Edit button not found');
             return;
@@ -746,6 +748,7 @@ function playground_text(playground, hidden = true) {
 
     function attachEventListener() {
         editeToggleButton.addEventListener('click', handleEditeToggleClick);
+        deleteButton.addEventListener('click', handleDeleteClick);
     }
 
     function handleShortcuts(event) {
@@ -761,6 +764,10 @@ function playground_text(playground, hidden = true) {
         } else {
             loadContentAndEnterEditMode();
         }
+    }
+
+    function handleDeleteClick() {
+        deletePost();
     }
 
     function loadContentAndEnterEditMode() {
@@ -940,6 +947,36 @@ function playground_text(playground, hidden = true) {
             rightButtons.style.width = '48px';
             rightButtons.style.gap = '8px';
         }
+    }
+
+    function deletePost() {
+        let currentPath = window.location.pathname;
+        let filePath = currentPath.replace(/^\//, '').replace(/\.html$/, '.md');
+        let file_paths = [];
+        file_paths.push(filePath);
+
+        async function sendDeletePost(file_paths) {
+            try {
+                const response = await fetch('http://localhost:8000/delete-posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        file_paths: file_paths,
+                    }),
+                });
+                if (response.ok) {
+                    exitEditMode();
+                    window.location.replace("http://localhost:3000");
+                } else {
+                    throw new Error('Server responded with an error');
+                }
+            } catch (error) {
+                exitEditMode();
+            }
+        }
+        sendDeletePost(file_paths);
     }
 })();
 
