@@ -731,6 +731,7 @@ function playground_text(playground, hidden = true) {
 
     // Wait for the DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener('keydown', handleShortcuts);
 
     function initialize() {
         toggleButton = document.getElementById('edit-button');
@@ -745,6 +746,13 @@ function playground_text(playground, hidden = true) {
 
     function attachEventListener() {
         toggleButton.addEventListener('click', handleToggleClick);
+    }
+
+    function handleShortcuts(event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            saveChanges();
+        }
     }
 
     function handleToggleClick() {
@@ -787,74 +795,69 @@ function playground_text(playground, hidden = true) {
     }
 
     function htmlToMarkdown(html) {
-        // Remove all newlines and extra spaces to start with a clean slate
-        let markdown = html.replace(/\s+/g, ' ').trim();
+        // 將 HTML 實體轉換為對應字符，但保留換行
+        let markdown = html
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
 
-        // Headers
+        // 移除開始和結尾的空白字符，但保留中間的換行
+        markdown = markdown.replace(/^\s+|\s+$/g, '');
+
+        // 簡化標題處理，保留換行
+        markdown = markdown.replace(/<h1.*?><a.*?>(.*?)<\/a><\/h1>/gi, '# $1');
+        markdown = markdown.replace(/<h2.*?><a.*?>(.*?)<\/a><\/h2>/gi, '## $1');
+
+        // 其他標題（如果需要）
         markdown = markdown
-            .replace(/<h1.*?>(.*?)<\/h1>/gi, '\n\n# $1\n\n')
-            .replace(/<h2.*?>(.*?)<\/h2>/gi, '\n\n## $1\n\n')
-            .replace(/<h3.*?>(.*?)<\/h3>/gi, '\n\n### $1\n\n')
-            .replace(/<h4.*?>(.*?)<\/h4>/gi, '\n\n#### $1\n\n')
-            .replace(/<h5.*?>(.*?)<\/h5>/gi, '\n\n##### $1\n\n')
-            .replace(/<h6.*?>(.*?)<\/h6>/gi, '\n\n###### $1\n\n');
+            .replace(/<h3.*?>(.*?)<\/h3>/gi, '### $1')
+            .replace(/<h4.*?>(.*?)<\/h4>/gi, '#### $1')
+            .replace(/<h5.*?>(.*?)<\/h5>/gi, '##### $1')
+            .replace(/<h6.*?>(.*?)<\/h6>/gi, '###### $1');
 
-        // Paragraphs
-        markdown = markdown.replace(/<p.*?>(.*?)<\/p>/gi, '\n\n$1\n\n');
+        // 移除段落標籤，但保留其內容和換行
+        markdown = markdown.replace(/<p>([\s\S]*?)<\/p>/gi, '$1');
 
-        // Line breaks
-        markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
+        // 保留原有的換行符，不做轉換
+        // markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
 
-        // Bold
-        markdown = markdown.replace(/<(strong|b)>(.*?)<\/\1>/gi, '**$2**');
+        // 粗體
+        markdown = markdown.replace(/<(strong|b)>([\s\S]*?)<\/\1>/gi, '**$2**');
 
-        // Italic
-        markdown = markdown.replace(/<(em|i)>(.*?)<\/\1>/gi, '*$2*');
+        // 斜體
+        markdown = markdown.replace(/<(em|i)>([\s\S]*?)<\/\1>/gi, '*$2*');
 
-        // Strikethrough
-        markdown = markdown.replace(/<(del|s)>(.*?)<\/\1>/gi, '~~$2~~');
+        // 刪除線
+        markdown = markdown.replace(/<(del|s)>([\s\S]*?)<\/\1>/gi, '~~$2~~');
 
-        // Links
-        markdown = markdown.replace(/<a.*?href="(.*?)".*?>(.*?)<\/a>/gi, '[$2]($1)');
+        // 一般鏈接
+        markdown = markdown.replace(/<a.*?href="(.*?)".*?>([\s\S]*?)<\/a>/gi, '[$2]($1)');
 
-        // Images
+        // 圖片
         markdown = markdown.replace(/<img.*?src="(.*?)".*?alt="(.*?)".*?>/gi, '![$2]($1)');
 
-        // Lists
+        // 列表（保留縮進和換行）
         markdown = markdown
-            .replace(/<(ul|ol)>|<\/(ul|ol)>/gi, '\n\n')
-            .replace(/<li>(.*?)<\/li>/gi, '- $1\n');
+            .replace(/<(ul|ol)>\s*([\s\S]*?)\s*<\/\1>/gi, '$2')
+            .replace(/<li>\s*([\s\S]*?)\s*<\/li>/gi, '- $1');
 
-        // Blockquotes
-        markdown = markdown.replace(/<blockquote>(.*?)<\/blockquote>/gi, '\n\n> $1\n\n');
+        // 引用
+        markdown = markdown.replace(/<blockquote>\s*([\s\S]*?)\s*<\/blockquote>/gi, '> $1');
 
-        // Code blocks
-        markdown = markdown.replace(/<pre><code>(.*?)<\/code><\/pre>/gi, '\n```\n$1\n```\n');
+        // 代碼塊
+        markdown = markdown.replace(/<pre><code>\s*([\s\S]*?)\s*<\/code><\/pre>/gi, '```\n$1\n```');
 
-        // Inline code
-        markdown = markdown.replace(/<code>(.*?)<\/code>/gi, '`$1`');
+        // 內聯代碼
+        markdown = markdown.replace(/<code>([\s\S]*?)<\/code>/gi, '`$1`');
 
-        // Horizontal rules
-        markdown = markdown.replace(/<hr\s*\/?>/gi, '\n\n---\n\n');
+        // 水平線
+        markdown = markdown.replace(/<hr\s*\/?>/gi, '---');
 
-        // Tables (basic support)
-        markdown = markdown.replace(/<table>(.*?)<\/table>/gi, function (match, tableContent) {
-            let rows = tableContent.match(/<tr>(.*?)<\/tr>/gi);
-            if (!rows) return match;
-
-            return '\n' + rows.map(row => {
-                let cells = row.match(/<t[hd]>(.*?)<\/t[hd]>/gi);
-                if (!cells) return '';
-                return '| ' + cells.map(cell => cell.replace(/<\/?t[hd]>/gi, '').trim()).join(' | ') + ' |';
-            }).join('\n') + '\n';
-        });
-
-        // Clean up extra spaces and newlines
-        markdown = markdown
-            .replace(/&nbsp;/g, ' ')
-            .replace(/\n\s+\n/g, '\n\n')
-            .replace(/\n\n\n+/g, '\n\n')
-            .trim();
+        // 移除任何剩餘的 HTML 標籤，但保留標籤內的內容和換行
+        markdown = markdown.replace(/<[^>]+>\s*([\s\S]*?)\s*<\/[^>]+>/g, '$1');
 
         return markdown;
     }
@@ -883,25 +886,30 @@ function playground_text(playground, hidden = true) {
             return;
         }
 
+        let currentPath = window.location.pathname;
+        let filePath = currentPath.replace(/^\//, '').replace(/\.html$/, '.md');
+        console.log('Saving changes to', filePath);
+
         try {
-            const response = await fetch('/save-content', {
+            const response = await fetch('http://localhost:8000/save-content', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ content: editor.value }),
+                body: JSON.stringify({
+                    content: editor.value,
+                    file_path: filePath
+                }),
             });
             if (response.ok) {
                 exitEditMode();
-                alert('Changes saved successfully!');
-                // Reload the page to show the updated rendered content
                 window.location.reload();
             } else {
                 throw new Error('Server responded with an error');
             }
         } catch (error) {
             console.error('Failed to save changes:', error);
-            alert('Failed to save changes. Please try again.');
+            alert('保存失敗');
         }
     }
 
