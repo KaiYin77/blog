@@ -1050,7 +1050,7 @@ function createPost() {
                 redirected_url = `http://localhost:3000/${redirected_url}`;
                 setTimeout(function() {
                     window.location.href = redirected_url;
-                }, 100);
+                }, 1000);
             } else {
                 throw new Error('Server responded with an error');
             }
