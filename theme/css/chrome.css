@@ -774,6 +774,10 @@ ul#searchresults span.teaser em {
     width: 14px;
 }
 
+.content-wrap {
+    min-height: 70vh;
+}
+
 .content-wrap textarea {
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
