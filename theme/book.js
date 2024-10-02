@@ -581,44 +581,44 @@ function playground_text(playground, hidden = true) {
     }, { passive: true });
 })();
 
-(function chapterNavigation() {
-    document.addEventListener('keydown', function (e) {
-        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
-        if (window.search && window.search.hasFocus()) { return; }
-        var html = document.querySelector('html');
+// (function chapterNavigation() {
+//     document.addEventListener('keydown', function (e) {
+//         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
+//         if (window.search && window.search.hasFocus()) { return; }
+//         var html = document.querySelector('html');
 
-        function next() {
-            var nextButton = document.querySelector('.nav-chapters.next');
-            if (nextButton) {
-                window.location.href = nextButton.href;
-            }
-        }
-        function prev() {
-            var previousButton = document.querySelector('.nav-chapters.previous');
-            if (previousButton) {
-                window.location.href = previousButton.href;
-            }
-        }
-        switch (e.key) {
-            case 'ArrowRight':
-                e.preventDefault();
-                if (html.dir == 'rtl') {
-                    prev();
-                } else {
-                    next();
-                }
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                if (html.dir == 'rtl') {
-                    next();
-                } else {
-                    prev();
-                }
-                break;
-        }
-    });
-})();
+//         function next() {
+//             var nextButton = document.querySelector('.nav-chapters.next');
+//             if (nextButton) {
+//                 window.location.href = nextButton.href;
+//             }
+//         }
+//         function prev() {
+//             var previousButton = document.querySelector('.nav-chapters.previous');
+//             if (previousButton) {
+//                 window.location.href = previousButton.href;
+//             }
+//         }
+//         switch (e.key) {
+//             case 'ArrowRight':
+//                 e.preventDefault();
+//                 if (html.dir == 'rtl') {
+//                     prev();
+//                 } else {
+//                     next();
+//                 }
+//                 break;
+//             case 'ArrowLeft':
+//                 e.preventDefault();
+//                 if (html.dir == 'rtl') {
+//                     next();
+//                 } else {
+//                     prev();
+//                 }
+//                 break;
+//         }
+//     });
+// })();
 
 (function clipboard() {
     var clipButtons = document.querySelectorAll('.clip-button');
