@@ -816,21 +816,21 @@ function playground_text(playground, hidden = true) {
         markdown = markdown.replace(/^\s+|\s+$/g, '');
 
         // 簡化標題處理，保留換行
-        markdown = markdown.replace(/<h1.*?><a.*?>(.*?)<\/a><\/h1>/gi, '# $1');
-        markdown = markdown.replace(/<h2.*?><a.*?>(.*?)<\/a><\/h2>/gi, '## $1');
+        markdown = markdown.replace(/<h1.*?><a.*?>(.*?)<\/a><\/h1>/gi, '# $1\n');
+        markdown = markdown.replace(/<h2.*?><a.*?>(.*?)<\/a><\/h2>/gi, '## $1\n');
 
         // 其他標題（如果需要）
         markdown = markdown
-            .replace(/<h3.*?>(.*?)<\/h3>/gi, '### $1')
-            .replace(/<h4.*?>(.*?)<\/h4>/gi, '#### $1')
-            .replace(/<h5.*?>(.*?)<\/h5>/gi, '##### $1')
-            .replace(/<h6.*?>(.*?)<\/h6>/gi, '###### $1');
+            .replace(/<h3.*?>(.*?)<\/h3>/gi, '### $1\n')
+            .replace(/<h4.*?>(.*?)<\/h4>/gi, '#### $1\n')
+            .replace(/<h5.*?>(.*?)<\/h5>/gi, '##### $1\n')
+            .replace(/<h6.*?>(.*?)<\/h6>/gi, '###### $1\n');
 
-        // 移除段落標籤，但保留其內容和換行
-        markdown = markdown.replace(/<p>([\s\S]*?)<\/p>/gi, '$1');
+        // 段落標籤，保留內容並插入換行符
+        markdown = markdown.replace(/<p>([\s\S]*?)<\/p>/gi, '$1\n');
 
-        // 保留原有的換行符，不做轉換
-        // markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
+        // 保留原有的換行符
+        markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
 
         // 粗體
         markdown = markdown.replace(/<(strong|b)>([\s\S]*?)<\/\1>/gi, '**$2**');
@@ -1048,7 +1048,7 @@ function createPost() {
             if (response.ok) {
                 let redirected_url = filename.replace('.md', '.html');
                 redirected_url = `http://localhost:3000/${redirected_url}`;
-                setTimeout(function() {
+                setTimeout(function () {
                     window.location.href = redirected_url;
                 }, 1000);
             } else {
