@@ -1046,7 +1046,11 @@ function createPost() {
                 }),
             });
             if (response.ok) {
-                window.location.reload();
+                let redirected_url = filename.replace('.md', '.html');
+                redirected_url = `http://localhost:3000/${redirected_url}`;
+                setTimeout(function() {
+                    window.location.href = redirected_url;
+                }, 100);
             } else {
                 throw new Error('Server responded with an error');
             }
