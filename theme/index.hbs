@@ -285,14 +285,22 @@
                     {{#previous}}
                     <a rel="prev" href="{{ path_to_root }}{{link}}" class="nav-chapters previous"
                         title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                        <span class="chapter-subtitle-l"> 較新一篇 </span>
+                        <span class="chapter-title-l">
+                            <i class="fa fa-angle-left"></i>
+                            {{title}}</span>
+                        
                     </a>
                     {{/previous}}
 
                     {{#next}}
                     <a rel="next prefetch" href="{{ path_to_root }}{{link}}" class="nav-chapters next"
                         title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class="chapter-subtitle-r"> 較舊一篇 </span>
+                        <span class="chapter-title-r">{{title}} 
+                            <i class="fa fa-angle-right"></i>
+                        </span>
+                        
                     </a>
                     {{/next}}
                 </nav>

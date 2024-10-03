@@ -215,20 +215,19 @@ a>.hljs {
 
 .nav-chapters {
     font-size: 2.5em;
-    text-align: center;
     text-decoration: none;
 
     top: 0;
     bottom: 0;
     margin: 0;
-    max-width: 150px;
-    min-width: 90px;
+    max-width: 250px;
+    min-width: 250px;
 
     display: flex;
     justify-content: center;
     align-content: center;
     flex-direction: column;
-    padding: 10px 50px;
+    padding: 10px 20px;
     /* Increased padding for wider buttons */
 
     transition: color 0.5s;
@@ -238,10 +237,32 @@ a>.hljs {
     width: 100vw;
 }
 
+.nav-chapters .chapter-subtitle-l {
+    font-size: 1.2rem;
+    text-align: left;
+}
+
+.nav-chapters .chapter-title-l {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.nav-chapters .chapter-subtitle-r {
+    font-size: 1.2rem;
+    text-align: right;
+}
+
+.nav-chapters .chapter-title-r {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-align: right;
+}
+
 .nav-chapters:hover {
     text-decoration: none;
     background-color: var(--theme-hover);
-    border-radius: 0.1em;
+    border-radius: 0.2em;
 }
 
 .nav-wrapper {
@@ -252,7 +273,7 @@ a>.hljs {
 .chrome-nav-wrapper {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: 85%;
 }
 
 .nav-wide-wrapper {
